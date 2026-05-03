@@ -23,9 +23,21 @@ class ProductController extends Controller
             'name'  => 'required|string',
             'price' => 'required|numeric',
             'stock' => 'required|integer',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $product = Product::create($request->all());
+        $imagePath = null;
+if($request->hasFile('image')){
+    $imagePath = $request->file('image')->store('products', 'public');
+}
+
+$product = Product::create([
+    'name'        => $request->name,
+    'description' => $request->description,
+    'price'       => $request->price,
+    'stock'       => $request->stock,
+    'image'       => $imagePath,  // ← এখানে image path save হচ্ছে
+]);
 
         return response()->json([
             'message' => 'Product created successfully',
