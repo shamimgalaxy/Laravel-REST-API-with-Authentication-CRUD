@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;  // ← যোগ করুন
+use App\Mail\WelcomeMail;              // ← যোগ করুন
 
 class AuthController extends Controller
 {
@@ -22,6 +24,9 @@ class AuthController extends Controller
             'email'    => $request->email,
             'password' => bcrypt($request->password),
         ]);
+
+        // Welcome email পাঠান
+        Mail::to($user->email)->send(new WelcomeMail($user->name));
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
